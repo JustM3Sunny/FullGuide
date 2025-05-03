@@ -1,22 +1,96 @@
-// src/memory/memory.js
-const logger = require('../logger/logger');
+/**
+ * src/memory/memory.js
+ *
+ * This module provides a simple in-memory storage mechanism for agents.
+ * It's designed to be lightweight and easily replaceable with more persistent
+ * storage solutions like databases or file systems.
+ *
+ * This is a basic implementation and can be extended to include features like:
+ *  - Time-to-live (TTL) for stored data
+ *  - Different storage strategies (e.g., LRU cache)
+ *  - Integration with external storage systems
+ */
 
-const memory = [];
+class Memory {
+  constructor() {
+    this.store = {}; // Internal object to hold the data
+  }
 
-function store(data) {
-  logger.info(`Storing data in memory: ${JSON.stringify(data)}`);
-  memory.push(data);
+  /**
+   * Stores a key-value pair in memory.
+   *
+   * @param {string} key - The key to store the value under.
+   * @param {any} value - The value to store.
+   */
+  async set(key, value) {
+    if (typeof key !== 'string') {
+      throw new Error('Key must be a string.');
+    }
+    this.store[key] = value;
+  }
+
+  /**
+   * Retrieves a value from memory based on its key.
+   *
+   * @param {string} key - The key to retrieve the value for.
+   * @returns {any | undefined} The value associated with the key, or undefined if the key is not found.
+   */
+  async get(key) {
+    if (typeof key !== 'string') {
+      throw new Error('Key must be a string.');
+    }
+    return this.store[key];
+  }
+
+  /**
+   * Deletes a key-value pair from memory.
+   *
+   * @param {string} key - The key to delete.
+   */
+  async delete(key) {
+    if (typeof key !== 'string') {
+      throw new Error('Key must be a string.');
+    }
+    delete this.store[key];
+  }
+
+  /**
+   * Clears all data from memory.
+   */
+  async clear() {
+    this.store = {};
+  }
+
+  /**
+   * Checks if a key exists in memory.
+   *
+   * @param {string} key - The key to check.
+   * @returns {boolean} True if the key exists, false otherwise.
+   */
+  async has(key) {
+    if (typeof key !== 'string') {
+      throw new Error('Key must be a string.');
+    }
+    return this.store.hasOwnProperty(key);
+  }
+
+  /**
+   * Returns all keys currently stored in memory.
+   *
+   * @returns {string[]} An array of keys.
+   */
+  async keys() {
+    return Object.keys(this.store);
+  }
+
+  /**
+   * Returns the number of items stored in memory.
+   *
+   * @returns {number} The number of items.
+   */
+  async size() {
+    return Object.keys(this.store).length;
+  }
 }
 
-function retrieve(query) {
-  logger.info(`Retrieving data from memory with query: ${query}`);
-  // Simple search - improve with more sophisticated techniques
-  const results = memory.filter(item => JSON.stringify(item).includes(query));
-  logger.info(`Retrieved data: ${JSON.stringify(results)}`);
-  return results;
-}
-
-module.exports = {
-  store,
-  retrieve,
-};
+module.exports = Memory;

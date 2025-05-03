@@ -1,7 +1,7 @@
 {
   "name": "ai-agent-guide",
   "version": "1.0.0",
-  "description": "A comprehensive guide to building AI agents with Node.js.",
+  "description": "A comprehensive guide to building AI agents with Node.js.  See README.md for detailed instructions.",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
@@ -19,7 +19,9 @@
     "nodejs",
     "guide",
     "tools",
-    "tool calling"
+    "tool calling",
+    "workflow",
+    "step-by-step"
   ],
   "author": "Your Name",
   "license": "MIT",
@@ -38,5 +40,13 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/your-repo-name.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/your-repo-name/issues"
+  },
+  "homepage": "https://github.com/your-username/your-repo-name#readme"
 }
