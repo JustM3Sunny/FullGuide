@@ -13,7 +13,7 @@
 
 class Memory {
   constructor() {
-    this.store = {}; // Internal object to hold the data
+    this.store = new Map(); // Internal Map to hold the data
   }
 
   /**
@@ -21,75 +21,78 @@ class Memory {
    *
    * @param {string} key - The key to store the value under.
    * @param {any} value - The value to store.
+   * @returns {Promise<void>}
    */
   async set(key, value) {
     if (typeof key !== 'string') {
-      throw new Error('Key must be a string.');
+      throw new TypeError('Key must be a string.');
     }
-    this.store[key] = value;
+    this.store.set(key, value);
   }
 
   /**
    * Retrieves a value from memory based on its key.
    *
    * @param {string} key - The key to retrieve the value for.
-   * @returns {any | undefined} The value associated with the key, or undefined if the key is not found.
+   * @returns {Promise<any | undefined>} The value associated with the key, or undefined if the key is not found.
    */
   async get(key) {
     if (typeof key !== 'string') {
-      throw new Error('Key must be a string.');
+      throw new TypeError('Key must be a string.');
     }
-    return this.store[key];
+    return this.store.get(key);
   }
 
   /**
    * Deletes a key-value pair from memory.
    *
    * @param {string} key - The key to delete.
+   * @returns {Promise<void>}
    */
   async delete(key) {
     if (typeof key !== 'string') {
-      throw new Error('Key must be a string.');
+      throw new TypeError('Key must be a string.');
     }
-    delete this.store[key];
+    this.store.delete(key);
   }
 
   /**
    * Clears all data from memory.
+   * @returns {Promise<void>}
    */
   async clear() {
-    this.store = {};
+    this.store.clear();
   }
 
   /**
    * Checks if a key exists in memory.
    *
    * @param {string} key - The key to check.
-   * @returns {boolean} True if the key exists, false otherwise.
+   * @returns {Promise<boolean>} True if the key exists, false otherwise.
    */
   async has(key) {
     if (typeof key !== 'string') {
-      throw new Error('Key must be a string.');
+      throw new TypeError('Key must be a string.');
     }
-    return this.store.hasOwnProperty(key);
+    return this.store.has(key);
   }
 
   /**
    * Returns all keys currently stored in memory.
    *
-   * @returns {string[]} An array of keys.
+   * @returns {Promise<string[]>} An array of keys.
    */
   async keys() {
-    return Object.keys(this.store);
+    return Array.from(this.store.keys());
   }
 
   /**
    * Returns the number of items stored in memory.
    *
-   * @returns {number} The number of items.
+   * @returns {Promise<number>} The number of items.
    */
   async size() {
-    return Object.keys(this.store).length;
+    return this.store.size;
   }
 }
 

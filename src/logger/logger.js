@@ -28,9 +28,9 @@ let currentLevel = levels.INFO; // Default log level
  * @param {string} levelString - The logging level as a string (e.g., 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL').
  */
 function setLevel(levelString) {
-  const level = Object.keys(levelStrings).find(key => levelStrings[key] === levelString.toUpperCase());
-  if (level !== undefined) {
-    currentLevel = parseInt(level, 10);
+  const levelStringUpper = levelString.toUpperCase();
+  if (levelStrings[levels[levelStringUpper]] !== undefined) {
+    currentLevel = levels[levelStringUpper];
   } else {
     console.warn(`Invalid log level: ${levelString}. Using default level: INFO.`);
   }

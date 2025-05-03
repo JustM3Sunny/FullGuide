@@ -2,24 +2,23 @@ require('dotenv').config();
 const Agent = require('./agent/agent');
 const logger = require('./logger/logger');
 
-const agent = new Agent('MyAgent');
-
 async function main() {
+  const agentName = process.env.AGENT_NAME || 'MyAgent'; // Use environment variable for agent name
+  const agent = new Agent(agentName);
+
+  const inputs = [
+    'Hello, Agent!',
+    'calculate 5 * 5',
+    'search Node.js',
+  ];
+
   try {
-    const input1 = 'Hello, Agent!';
-    const response1 = await agent.processInput(input1);
-    logger.info(`Response 1: ${response1}`);
-
-    const input2 = 'calculate 5 * 5';
-    const response2 = await agent.processInput(input2);
-    logger.info(`Response 2: ${response2}`);
-
-    const input3 = 'search Node.js';
-    const response3 = await agent.processInput(input3);
-    logger.info(`Response 3: ${response3}`);
-
+    for (const [index, input] of inputs.entries()) {
+      const response = await agent.processInput(input);
+      logger.info(`Response ${index + 1}: ${response}`);
+    }
   } catch (error) {
-    logger.error(`An error occurred: ${error.message}`);
+    logger.error(`An error occurred: ${error.message}`, error); // Include the error object for better debugging
   }
 }
 

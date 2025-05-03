@@ -51,6 +51,10 @@ class Agent {
    * @returns {string} The ID of the newly created task.
    */
   addTask(description) {
+    if (typeof description !== 'string' || description.trim() === '') {
+      throw new Error('Task description must be a non-empty string.');
+    }
+
     const taskId = `task-${this.taskIdCounter++}`;
     const newTask = {
       id: taskId,
@@ -67,6 +71,9 @@ class Agent {
    * @returns {Task | undefined} The task object, or undefined if not found.
    */
   getTask(taskId) {
+    if (typeof taskId !== 'string' || taskId.trim() === '') {
+      return undefined; // Or throw an error, depending on desired behavior
+    }
     return this.tasks.find((task) => task.id === taskId);
   }
 
@@ -76,6 +83,15 @@ class Agent {
    * @param {string} status - The new status of the task.
    */
   updateTaskStatus(taskId, status) {
+    if (typeof taskId !== 'string' || taskId.trim() === '') {
+      console.warn('Invalid taskId provided to updateTaskStatus.');
+      return;
+    }
+    if (typeof status !== 'string' || status.trim() === '') {
+      console.warn('Invalid status provided to updateTaskStatus.');
+      return;
+    }
+
     const task = this.getTask(taskId);
     if (task) {
       task.status = status;
@@ -90,6 +106,9 @@ class Agent {
    * @throws {Error} If a tool with the same name already exists.
    */
   addTool(tool) {
+    if (!tool || typeof tool.name !== 'string' || tool.name.trim() === '' || typeof tool.execute !== 'function') {
+      throw new Error('Tool must have a name and an execute function.');
+    }
     if (this.tools[tool.name]) {
       throw new Error(`Tool with name '${tool.name}' already exists.`);
     }
@@ -104,6 +123,10 @@ class Agent {
    * @throws {Error} If the tool is not found.
    */
   async executeTool(toolName, args) {
+    if (typeof toolName !== 'string' || toolName.trim() === '') {
+      throw new Error('Tool name must be a non-empty string.');
+    }
+
     const tool = this.tools[toolName];
     if (!tool) {
       throw new Error(`Tool with name '${toolName}' not found.`);
@@ -123,6 +146,10 @@ class Agent {
    * @param {any} value - The value to store.
    */
   setState(key, value) {
+    if (typeof key !== 'string' || key.trim() === '') {
+      console.warn('Invalid key provided to setState.');
+      return;
+    }
     this.state[key] = value;
   }
 
@@ -132,7 +159,18 @@ class Agent {
    * @returns {any} The value stored under the given key, or undefined if the key is not found.
    */
   getState(key) {
+    if (typeof key !== 'string' || key.trim() === '') {
+      return undefined;
+    }
     return this.state[key];
+  }
+
+  /**
+   * Returns a copy of all tasks.
+   * @returns {Task[]} A new array containing all tasks.
+   */
+  getAllTasks() {
+    return [...this.tasks]; // Returns a shallow copy of the tasks array
   }
 }
 

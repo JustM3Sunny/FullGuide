@@ -1,8 +1,14 @@
 // src/config/config.js
-require('dotenv').config();
+import dotenv from 'dotenv';
 
-module.exports = {
-  apiKey: process.env.API_KEY || 'default_api_key',
-  logLevel: process.env.LOG_LEVEL || 'info',
-  // Add other configuration variables here
+dotenv.config();
+
+const apiKey = process.env.API_KEY || 'default_api_key';
+const logLevel = process.env.LOG_LEVEL || 'info';
+
+const config = {
+  apiKey,
+  logLevel,
 };
+
+export default config;

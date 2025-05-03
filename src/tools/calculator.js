@@ -8,6 +8,16 @@
  */
 
 /**
+ * Checks if a value is a number.
+ * @param {*} value The value to check.
+ * @returns {boolean} True if the value is a number, false otherwise.
+ */
+function isNumber(value) {
+  return typeof value === 'number' && isFinite(value);
+}
+
+
+/**
  * Adds two numbers together.
  *
  * @param {number} a The first number.
@@ -16,7 +26,7 @@
  * @throws {TypeError} If either input is not a number.
  */
 function add(a, b) {
-  if (typeof a !== 'number' || typeof b !== 'number') {
+  if (!isNumber(a) || !isNumber(b)) {
     throw new TypeError('Both inputs must be numbers.');
   }
   return a + b;
@@ -31,7 +41,7 @@ function add(a, b) {
  * @throws {TypeError} If either input is not a number.
  */
 function subtract(a, b) {
-  if (typeof a !== 'number' || typeof b !== 'number') {
+  if (!isNumber(a) || !isNumber(b)) {
     throw new TypeError('Both inputs must be numbers.');
   }
   return a - b;
@@ -46,7 +56,7 @@ function subtract(a, b) {
  * @throws {TypeError} If either input is not a number.
  */
 function multiply(a, b) {
-  if (typeof a !== 'number' || typeof b !== 'number') {
+  if (!isNumber(a) || !isNumber(b)) {
     throw new TypeError('Both inputs must be numbers.');
   }
   return a * b;
@@ -62,7 +72,7 @@ function multiply(a, b) {
  * @throws {Error} If attempting to divide by zero.
  */
 function divide(a, b) {
-  if (typeof a !== 'number' || typeof b !== 'number') {
+  if (!isNumber(a) || !isNumber(b)) {
     throw new TypeError('Both inputs must be numbers.');
   }
   if (b === 0) {
@@ -81,18 +91,20 @@ function divide(a, b) {
  * @throws {Error} If the operator is invalid.
  */
 function calculate(operator, operand1, operand2) {
-  switch (operator) {
-    case '+':
-      return add(operand1, operand2);
-    case '-':
-      return subtract(operand1, operand2);
-    case '*':
-      return multiply(operand1, operand2);
-    case '/':
-      return divide(operand1, operand2);
-    default:
-      throw new Error('Invalid operator: ' + operator);
+  const operations = {
+    '+': add,
+    '-': subtract,
+    '*': multiply,
+    '/': divide,
+  };
+
+  const operation = operations[operator];
+
+  if (!operation) {
+    throw new Error(`Invalid operator: ${operator}`);
   }
+
+  return operation(operand1, operand2);
 }
 
 

@@ -1,7 +1,7 @@
 /**
  * src/tools/search.js
  *
- * This module provides a simple search tool that can be used by other parts of the application.
+ * This module provides a search tool that can be used by other parts of the application.
  * It currently uses a basic in-memory search, but could be extended to use an external search service.
  */
 
@@ -9,20 +9,29 @@
  * Performs a search operation.
  *
  * @param {string} query The search query.
- * @param {Array<string>} data The data to search within.  Each element is a string.
- * @returns {Array<string>} An array of strings that match the query.
+ * @param {string[]} data The data to search within.  Each element is a string.
+ * @returns {string[]} An array of strings that match the query.
  */
 function search(query, data) {
   if (!query || !data || !Array.isArray(data)) {
-    return []; // Return an empty array if the query or data is invalid.
+    return [];
   }
 
-  const lowerCaseQuery = query.toLowerCase();
+  const normalizedQuery = query.toLowerCase().trim();
+
+  if (!normalizedQuery) {
+    return []; // Return empty array if query is only whitespace
+  }
+
   const results = [];
 
-  for (const item of data) {
-    if (item && typeof item === 'string' && item.toLowerCase().includes(lowerCaseQuery)) {
-      results.push(item);
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    if (typeof item === 'string') {
+      const normalizedItem = item.toLowerCase().trim();
+      if (normalizedItem.includes(normalizedQuery)) {
+        results.push(item);
+      }
     }
   }
 
@@ -45,7 +54,7 @@ const exampleData = [
  * Executes a search against the example data.  This is primarily for demonstration purposes.
  *
  * @param {string} query The search query.
- * @returns {Array<string>} The search results.
+ * @returns {string[]} The search results.
  */
 function searchExample(query) {
   return search(query, exampleData);

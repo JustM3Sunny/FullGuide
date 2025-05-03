@@ -2,17 +2,11 @@ const calculator = require('./calculator');
 const search = require('./search');
 
 /**
+ * @module tools
  * This module exports a collection of tools that can be used by other parts of the application.
  * Currently, it includes a calculator and a search tool.
  *
- * To add a new tool:
- * 1. Create a new file for the tool in the same directory (e.g., 'myNewTool.js').
- * 2. Implement the tool's functionality in that file.
- * 3. Require the tool in this file (e.g., `const myNewTool = require('./myNewTool');`).
- * 4. Add the tool to the module.exports object (e.g., `myNewTool`).
- *
- * Example:
- *
+ * @example
  * // myNewTool.js
  * module.exports = {
  *   doSomething: (input) => {
@@ -32,9 +26,7 @@ const search = require('./search');
  *   myNewTool,
  * };
  *
- *
- * Tool Calling System:
- *
+ * @description
  * The tools exported here are designed to be called by a central orchestration system.
  * This system is responsible for determining which tool to use based on the user's input or the current task.
  *
@@ -47,20 +39,29 @@ const search = require('./search');
  * Each tool should be designed to be modular and reusable, with a clear and well-defined interface.
  * This allows the orchestration system to easily call and integrate different tools as needed.
  *
- * Error Handling:
- *
+ * @errorHandling
  * Each tool should handle its own errors gracefully and return informative error messages to the orchestration system.
  * The orchestration system should then handle these errors appropriately, such as by logging them or displaying them to the user.
  *
- * Input Validation:
- *
+ * @inputValidation
  * Each tool should validate its input parameters to ensure that they are valid and within the expected range.
- * This helps to prevent errors and ensures that the tool functions correctly.
+ * This helps to prevent errors and ensures that the tool functions correctly.  Consider using a validation library like Joi.
  *
- * Logging:
- *
+ * @logging
  * Each tool should log important events, such as when it is called, what input parameters it receives, and what output it returns.
- * This helps to debug the tool and track its usage.
+ * This helps to debug the tool and track its usage.  Consider using a logging library like Winston or Bunyan.
+ *
+ * @security
+ *  - Sanitize inputs to prevent injection attacks.
+ *  - Implement proper authorization and authentication if tools handle sensitive data.
+ *  - Avoid storing sensitive data directly in the code or configuration files. Use environment variables or secure storage mechanisms.
+ *
+ * @moduleTools
+ * To add a new tool:
+ * 1. Create a new file for the tool in the same directory (e.g., 'myNewTool.js').
+ * 2. Implement the tool's functionality in that file.
+ * 3. Require the tool in this file (e.g., `const myNewTool = require('./myNewTool');`).
+ * 4. Add the tool to the module.exports object (e.g., `myNewTool`).
  */
 module.exports = {
   calculator,
