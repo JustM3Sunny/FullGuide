@@ -26,14 +26,17 @@ let currentLevel = levels.INFO; // Default log level
 /**
  * Sets the current logging level.
  * @param {string} levelString - The logging level as a string (e.g., 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL').
+ * @throws {Error} If the provided level string is invalid.
  */
 function setLevel(levelString) {
   const levelStringUpper = levelString.toUpperCase();
-  if (levelStrings[levels[levelStringUpper]] !== undefined) {
-    currentLevel = levels[levelStringUpper];
-  } else {
-    console.warn(`Invalid log level: ${levelString}. Using default level: INFO.`);
+  const newLevel = levels[levelStringUpper];
+
+  if (newLevel === undefined) {
+    throw new Error(`Invalid log level: ${levelString}. Valid levels are: ${Object.keys(levels).join(', ')}`);
   }
+
+  currentLevel = newLevel;
 }
 
 /**
@@ -51,49 +54,22 @@ function log(level, message, ...args) {
 }
 
 /**
- * Logs a debug message.
- * @param {string} message - The message to log.
- * @param  {...any} args - Additional arguments to log.
+ * Creates a logging function for a specific level.
+ * @param {number} level - The logging level.
+ * @returns {function(string, ...any): void} - The logging function.
  */
-function debug(message, ...args) {
-  log(levels.DEBUG, message, ...args);
-}
+const createLogger = (level) => {
+  return (message, ...args) => {
+    log(level, message, ...args);
+  };
+};
 
-/**
- * Logs an info message.
- * @param {string} message - The message to log.
- * @param  {...any} args - Additional arguments to log.
- */
-function info(message, ...args) {
-  log(levels.INFO, message, ...args);
-}
+const debug = createLogger(levels.DEBUG);
+const info = createLogger(levels.INFO);
+const warn = createLogger(levels.WARN);
+const error = createLogger(levels.ERROR);
+const fatal = createLogger(levels.FATAL);
 
-/**
- * Logs a warning message.
- * @param {string} message - The message to log.
- * @param  {...any} args - Additional arguments to log.
- */
-function warn(message, ...args) {
-  log(levels.WARN, message, ...args);
-}
-
-/**
- * Logs an error message.
- * @param {string} message - The message to log.
- * @param  {...any} args - Additional arguments to log.
- */
-function error(message, ...args) {
-  log(levels.ERROR, message, ...args);
-}
-
-/**
- * Logs a fatal message.
- * @param {string} message - The message to log.
- * @param  {...any} args - Additional arguments to log.
- */
-function fatal(message, ...args) {
-  log(levels.FATAL, message, ...args);
-}
 
 module.exports = {
   setLevel,

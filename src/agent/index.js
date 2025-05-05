@@ -43,15 +43,15 @@ class Agent {
 
   // Use a tool
   async useTool(name, input) {
-    if (this.tools[name]) {
-      try {
-        return await this.tools[name](input); // Await the tool function
-      } catch (error) {
-        console.error(`Error using tool "${name}":`, error);
-        return `Error: Tool "${name}" failed to execute. See console for details.`;
-      }
-    } else {
+    if (!this.tools[name]) {
       return `Tool "${name}" not found.`;
+    }
+
+    try {
+      return await this.tools[name](input); // Await the tool function
+    } catch (error) {
+      console.error(`Error using tool "${name}":`, error);
+      return `Error: Tool "${name}" failed to execute. See console for details.`;
     }
   }
 
@@ -69,29 +69,29 @@ module.exports = Agent;
 
 // src/agent/agentState.js
 const agentState = {
-  agents: {}, // Object to store agents by ID
+  agents: new Map(), // Use a Map for better performance and key handling
 
   // Add an agent to the state
   addAgent(agent) {
     if (!(agent instanceof Agent)) {
       throw new Error('Only Agent instances can be added.');
     }
-    this.agents[agent.id] = agent;
+    this.agents.set(agent.id, agent);
   },
 
   // Get an agent by ID
   getAgent(id) {
-    return this.agents[id] || null; // Return null if agent not found
+    return this.agents.get(id) || null; // Return null if agent not found
   },
 
   // Remove an agent by ID
   removeAgent(id) {
-    delete this.agents[id];
+    this.agents.delete(id);
   },
 
   // List all agents
   listAgents() {
-    return Object.values(this.agents);
+    return Array.from(this.agents.values());
   },
 };
 
@@ -138,6 +138,15 @@ async function main() {
 
   const calculationResult = await myAgent.useTool("calculate", "2 + 2 * 3");
   console.log(calculationResult);
+
+    // Example of using agentState
+    agentState.addAgent(myAgent);
+    const retrievedAgent = agentState.getAgent(myAgent.id);
+    console.log("Retrieved Agent:", retrievedAgent.getInfo());
+
+    agentState.removeAgent(myAgent.id);
+    const agentAfterRemoval = agentState.getAgent(myAgent.id);
+    console.log("Agent after removal:", agentAfterRemoval);
 }
 
 main();

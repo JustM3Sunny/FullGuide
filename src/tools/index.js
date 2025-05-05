@@ -1,9 +1,6 @@
-const calculator = require('./calculator');
-const search = require('./search');
-
 /**
  * @module tools
- * This module exports a collection of tools that can be used by other parts of the application.
+ * @description This module exports a collection of tools that can be used by other parts of the application.
  * Currently, it includes a calculator and a search tool.
  *
  * @example
@@ -39,30 +36,36 @@ const search = require('./search');
  * Each tool should be designed to be modular and reusable, with a clear and well-defined interface.
  * This allows the orchestration system to easily call and integrate different tools as needed.
  *
- * @errorHandling
+ * **Error Handling:**
  * Each tool should handle its own errors gracefully and return informative error messages to the orchestration system.
- * The orchestration system should then handle these errors appropriately, such as by logging them or displaying them to the user.
+ * The orchestration system should then handle these errors appropriately, such as by logging them or displaying them to the user.  Consider using try/catch blocks and custom error classes.
  *
- * @inputValidation
+ * **Input Validation:**
  * Each tool should validate its input parameters to ensure that they are valid and within the expected range.
- * This helps to prevent errors and ensures that the tool functions correctly.  Consider using a validation library like Joi.
+ * This helps to prevent errors and ensures that the tool functions correctly. Consider using a validation library like Joi or Zod.
  *
- * @logging
+ * **Logging:**
  * Each tool should log important events, such as when it is called, what input parameters it receives, and what output it returns.
- * This helps to debug the tool and track its usage.  Consider using a logging library like Winston or Bunyan.
+ * This helps to debug the tool and track its usage. Consider using a logging library like Winston, Bunyan, or Pino.
  *
- * @security
- *  - Sanitize inputs to prevent injection attacks.
- *  - Implement proper authorization and authentication if tools handle sensitive data.
- *  - Avoid storing sensitive data directly in the code or configuration files. Use environment variables or secure storage mechanisms.
+ * **Security Considerations:**
+ *  - **Input Sanitization:** Sanitize inputs to prevent injection attacks (e.g., XSS, SQL injection).  Use libraries designed for sanitization.
+ *  - **Authorization and Authentication:** Implement proper authorization and authentication if tools handle sensitive data. Use established authentication protocols like OAuth 2.0 or JWT.
+ *  - **Secrets Management:** Avoid storing sensitive data directly in the code or configuration files. Use environment variables, secure storage mechanisms (e.g., HashiCorp Vault), or dedicated secrets management services.
+ *  - **Rate Limiting:** Implement rate limiting to prevent abuse and denial-of-service attacks.
+ *  - **Regular Security Audits:** Conduct regular security audits and penetration testing to identify and address vulnerabilities.
  *
- * @moduleTools
+ * **Adding a New Tool:**
  * To add a new tool:
  * 1. Create a new file for the tool in the same directory (e.g., 'myNewTool.js').
  * 2. Implement the tool's functionality in that file.
  * 3. Require the tool in this file (e.g., `const myNewTool = require('./myNewTool');`).
  * 4. Add the tool to the module.exports object (e.g., `myNewTool`).
  */
+
+const calculator = require('./calculator');
+const search = require('./search');
+
 module.exports = {
   calculator,
   search,

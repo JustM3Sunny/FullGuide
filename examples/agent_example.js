@@ -17,11 +17,20 @@
 
 /**
  * Represents a simple tool that the agent can use to perform actions.
- * @param {string} name - The name of the tool.
- * @param {function} execute - The function that performs the tool's action.
  */
 class Tool {
+  /**
+   * @param {string} name - The name of the tool.
+   * @param {function(string): string} execute - The function that performs the tool's action.  Takes a task string and returns a result string.
+   */
   constructor(name, execute) {
+    if (typeof name !== 'string' || !name) {
+      throw new Error('Tool name must be a non-empty string.');
+    }
+    if (typeof execute !== 'function') {
+      throw new Error('Tool execute must be a function.');
+    }
+
     this.name = name;
     this.execute = execute;
   }
@@ -31,7 +40,13 @@ class Tool {
  * Represents the agent.
  */
 class Agent {
+  /**
+   * @param {string} name
+   */
   constructor(name) {
+    if (typeof name !== 'string' || !name) {
+      throw new Error('Agent name must be a non-empty string.');
+    }
     this.name = name;
     this.tools = {}; // A dictionary to store available tools.
     this.taskQueue = []; // A queue to hold tasks.
@@ -42,6 +57,12 @@ class Agent {
    * @param {Tool} tool - The tool to add.
    */
   addTool(tool) {
+    if (!(tool instanceof Tool)) {
+      throw new Error('Invalid tool.  Must be an instance of the Tool class.');
+    }
+    if (this.tools[tool.name]) {
+      console.warn(`Tool with name ${tool.name} already exists. Overwriting.`);
+    }
     this.tools[tool.name] = tool;
   }
 
@@ -50,14 +71,19 @@ class Agent {
    * @param {string} taskDescription - A description of the task.
    */
   receiveTask(taskDescription) {
+    if (typeof taskDescription !== 'string' || !taskDescription) {
+      console.warn('Received an empty or invalid task description. Ignoring.');
+      return;
+    }
     this.taskQueue.push({ description: taskDescription, status: 'pending' });
     console.log(`${this.name}: Received task: ${taskDescription}`);
   }
 
   /**
    * Processes the task queue.
+   * @async
    */
-  processTasks() {
+  async processTasks() {
     while (this.taskQueue.length > 0) {
       const task = this.taskQueue.shift();
       task.status = 'processing';
@@ -66,8 +92,8 @@ class Agent {
       // Simulate breaking down the task into sub-tasks.
       const subTasks = this.breakDownTask(task.description);
 
-      // Execute each sub-task.
-      const results = this.executeSubTasks(subTasks);
+      // Execute each sub-task.  Use Promise.all to execute in parallel.
+      const results = await Promise.all(this.executeSubTasks(subTasks));
 
       // Combine the results.
       const finalResult = this.combineResults(results);
@@ -93,26 +119,29 @@ class Agent {
   /**
    * Executes each sub-task using available tools.
    * @param {string[]} subTasks - An array of sub-task descriptions.
-   * @returns {any[]} - An array of results from each sub-task.
+   * @returns {Promise<string>[]} - An array of Promises, each resolving to the result of a sub-task.
    */
   executeSubTasks(subTasks) {
-    const results = [];
-    for (const subTask of subTasks) {
+    return subTasks.map(async (subTask) => {
       console.log(`${this.name}: Executing sub-task: ${subTask}`);
 
       // Find a suitable tool for the sub-task (very basic example).
       const tool = this.findToolForTask(subTask);
 
       if (tool) {
-        const result = tool.execute(subTask);
-        results.push(result);
-        console.log(`${this.name}: Sub-task completed with tool: ${tool.name}. Result: ${result}`);
+        try {
+          const result = await tool.execute(subTask); // Await the tool execution
+          console.log(`${this.name}: Sub-task completed with tool: ${tool.name}. Result: ${result}`);
+          return result;
+        } catch (error) {
+          console.error(`${this.name}: Error executing tool ${tool.name} for sub-task ${subTask}:`, error);
+          return `Error executing ${tool.name} for ${subTask}: ${error.message}`; // Return an error message
+        }
       } else {
         console.log(`${this.name}: No tool found for sub-task: ${subTask}`);
-        results.push(`No tool found for: ${subTask}`);
+        return `No tool found for: ${subTask}`;
       }
-    }
-    return results;
+    });
   }
 
   /**
@@ -122,12 +151,12 @@ class Agent {
    * @returns {Tool | null} - The tool to use, or null if no suitable tool is found.
    */
   findToolForTask(task) {
-    // Example: If the task contains the word "calculate", use the "calculator" tool.
-    if (task.toLowerCase().includes('calculate')) {
+    const lowerCaseTask = task.toLowerCase(); // Convert to lowercase once for efficiency
+
+    if (lowerCaseTask.includes('calculate')) {
       return this.tools['calculator'];
     }
-    // Example: If the task contains the word "search", use the "searchEngine" tool.
-    if (task.toLowerCase().includes('search')) {
+    if (lowerCaseTask.includes('search')) {
       return this.tools['searchEngine'];
     }
     return null;
@@ -135,7 +164,7 @@ class Agent {
 
   /**
    * Combines the results from the sub-tasks into a final result.
-   * @param {any[]} results - An array of results from each sub-task.
+   * @param {string[]} results - An array of results from each sub-task.
    * @returns {string} - The final result.
    */
   combineResults(results) {
@@ -148,15 +177,17 @@ class Agent {
 // Example Usage:
 
 // Create some tools.
-const calculatorTool = new Tool('calculator', (task) => {
+const calculatorTool = new Tool('calculator', async (task) => { // Make the execute function async
   // Simulate a calculation.
   console.log("Performing calculation");
+  await new Promise(resolve => setTimeout(resolve, 50)); // Simulate async operation
   return `Calculated result for ${task}`;
 });
 
-const searchEngineTool = new Tool('searchEngine', (task) => {
+const searchEngineTool = new Tool('searchEngine', async (task) => { // Make the execute function async
   // Simulate a search.
   console.log("Performing search");
+  await new Promise(resolve => setTimeout(resolve, 50)); // Simulate async operation
   return `Search results for ${task}`;
 });
 

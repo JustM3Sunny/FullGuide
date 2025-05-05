@@ -12,12 +12,12 @@
  * @param {string} str The string to check.
  * @returns {boolean} True if the string is empty or contains only whitespace, false otherwise.
  */
-function isEmptyString(str) {
+const isEmptyString = (str) => {
   if (!str) {
     return true;
   }
   return str.trim().length === 0;
-}
+};
 
 /**
  * Generates a random string of a specified length.
@@ -25,14 +25,23 @@ function isEmptyString(str) {
  * @param {number} length The desired length of the random string.
  * @returns {string} A random string.
  */
-function generateRandomString(length) {
+const generateRandomString = (length) => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  // Use crypto.getRandomValues for better randomness, if available
+  if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+    const randomValues = new Uint32Array(length);
+    window.crypto.getRandomValues(randomValues);
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(randomValues[i] % characters.length);
+    }
+  } else {
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
   }
   return result;
-}
+};
 
 /**
  * Delays execution for a specified number of milliseconds.
@@ -40,9 +49,7 @@ function generateRandomString(length) {
  * @param {number} ms The number of milliseconds to delay.
  * @returns {Promise<void>} A promise that resolves after the specified delay.
  */
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Validates if a given value is a valid email address.
@@ -50,10 +57,10 @@ function delay(ms) {
  * @param {string} email The email address to validate.
  * @returns {boolean} True if the email address is valid, false otherwise.
  */
-function isValidEmail(email) {
+const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
-}
+};
 
 /**
  * Capitalizes the first letter of a string.
@@ -61,12 +68,12 @@ function isValidEmail(email) {
  * @param {string} str The string to capitalize.
  * @returns {string} The capitalized string.
  */
-function capitalizeFirstLetter(str) {
+const capitalizeFirstLetter = (str) => {
   if (isEmptyString(str)) {
     return str;
   }
   return str.charAt(0).toUpperCase() + str.slice(1);
-}
+};
 
 /**
  * Performs a deep copy of an object.  Handles circular references.
@@ -75,7 +82,7 @@ function capitalizeFirstLetter(str) {
  * @param {WeakMap} seenObjects A WeakMap to track already copied objects (for circular references).
  * @returns {any} A deep copy of the object.
  */
-function deepCopy(obj, seenObjects = new WeakMap()) {
+const deepCopy = (obj, seenObjects = new WeakMap()) => {
   // Check if the object is primitive or null
   if (typeof obj !== "object" || obj === null) {
     return obj;
@@ -97,18 +104,18 @@ function deepCopy(obj, seenObjects = new WeakMap()) {
   } else {
     copy = {};
     seenObjects.set(obj, copy); // Store the copy before recursion
-    for (let key in obj) {
-      if (obj.hasOwnProperty(key)) {
+    for (const key in obj) { // Use const for key
+      if (Object.hasOwn(obj, key)) { // Use Object.hasOwn instead of hasOwnProperty
         copy[key] = deepCopy(obj[key], seenObjects);
       }
     }
   }
 
   return copy;
-}
+};
 
 
-module.exports = {
+export {
   isEmptyString,
   generateRandomString,
   delay,

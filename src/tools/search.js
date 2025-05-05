@@ -25,8 +25,7 @@ function search(query, data) {
 
   const results = [];
 
-  for (let i = 0; i < data.length; i++) {
-    const item = data[i];
+  for (const item of data) {
     if (typeof item === 'string') {
       const normalizedItem = item.toLowerCase().trim();
       if (normalizedItem.includes(normalizedQuery)) {

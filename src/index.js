@@ -3,8 +3,15 @@ const Agent = require('./agent/agent');
 const logger = require('./logger/logger');
 
 async function main() {
-  const agentName = process.env.AGENT_NAME || 'MyAgent'; // Use environment variable for agent name
-  const agent = new Agent(agentName);
+  const agentName = process.env.AGENT_NAME || 'MyAgent';
+  let agent;
+
+  try {
+    agent = new Agent(agentName);
+  } catch (error) {
+    logger.error(`Failed to initialize agent: ${error.message}`, error);
+    return; // Exit if agent initialization fails
+  }
 
   const inputs = [
     'Hello, Agent!',
@@ -13,12 +20,17 @@ async function main() {
   ];
 
   try {
-    for (const [index, input] of inputs.entries()) {
-      const response = await agent.processInput(input);
-      logger.info(`Response ${index + 1}: ${response}`);
+    for (let i = 0; i < inputs.length; i++) {
+      const input = inputs[i];
+      try {
+        const response = await agent.processInput(input);
+        logger.info(`Response ${i + 1}: ${response}`);
+      } catch (error) {
+        logger.error(`Error processing input "${input}": ${error.message}`, error);
+      }
     }
   } catch (error) {
-    logger.error(`An error occurred: ${error.message}`, error); // Include the error object for better debugging
+    logger.error(`An unexpected error occurred: ${error.message}`, error);
   }
 }
 

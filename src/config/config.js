@@ -3,12 +3,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const apiKey = process.env.API_KEY || 'default_api_key';
-const logLevel = process.env.LOG_LEVEL || 'info';
+const apiKey = process.env.API_KEY;
+const logLevel = process.env.LOG_LEVEL;
 
 const config = {
-  apiKey,
-  logLevel,
+  apiKey: apiKey || 'default_api_key',
+  logLevel: logLevel || 'info',
 };
 
 export default config;

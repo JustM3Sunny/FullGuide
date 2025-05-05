@@ -13,7 +13,7 @@
  * @returns {boolean} True if the value is a number, false otherwise.
  */
 function isNumber(value) {
-  return typeof value === 'number' && isFinite(value);
+  return typeof value === 'number' && Number.isFinite(value);
 }
 
 
@@ -91,20 +91,18 @@ function divide(a, b) {
  * @throws {Error} If the operator is invalid.
  */
 function calculate(operator, operand1, operand2) {
-  const operations = {
-    '+': add,
-    '-': subtract,
-    '*': multiply,
-    '/': divide,
-  };
-
-  const operation = operations[operator];
-
-  if (!operation) {
-    throw new Error(`Invalid operator: ${operator}`);
+  switch (operator) {
+    case '+':
+      return add(operand1, operand2);
+    case '-':
+      return subtract(operand1, operand2);
+    case '*':
+      return multiply(operand1, operand2);
+    case '/':
+      return divide(operand1, operand2);
+    default:
+      throw new Error(`Invalid operator: ${operator}`);
   }
-
-  return operation(operand1, operand2);
 }
 
 

@@ -1,3 +1,7 @@
+/**
+ * Prettier configuration file.
+ * This file defines the code formatting rules used by Prettier.
+ */
 module.exports = {
   semi: true,
   trailingComma: 'es5',

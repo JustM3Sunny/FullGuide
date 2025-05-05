@@ -33,8 +33,8 @@ class Agent {
    * @param {string} config.description - A description of the agent's purpose.
    */
   constructor(config) {
-    if (!config || !config.name || !config.description) {
-      throw new Error("Agent configuration must include 'name' and 'description'.");
+    if (!config || typeof config.name !== 'string' || config.name.trim() === '' || typeof config.description !== 'string' || config.description.trim() === '') {
+      throw new Error("Agent configuration must include non-empty 'name' and 'description'.");
     }
 
     this.name = config.name;
@@ -72,7 +72,7 @@ class Agent {
    */
   getTask(taskId) {
     if (typeof taskId !== 'string' || taskId.trim() === '') {
-      return undefined; // Or throw an error, depending on desired behavior
+      return undefined;
     }
     return this.tasks.find((task) => task.id === taskId);
   }
@@ -81,22 +81,25 @@ class Agent {
    * Updates the status of a task.
    * @param {string} taskId - The ID of the task to update.
    * @param {string} status - The new status of the task.
+   * @returns {boolean} True if the task was updated, false otherwise.
    */
   updateTaskStatus(taskId, status) {
     if (typeof taskId !== 'string' || taskId.trim() === '') {
       console.warn('Invalid taskId provided to updateTaskStatus.');
-      return;
+      return false;
     }
     if (typeof status !== 'string' || status.trim() === '') {
       console.warn('Invalid status provided to updateTaskStatus.');
-      return;
+      return false;
     }
 
     const task = this.getTask(taskId);
     if (task) {
       task.status = status;
+      return true;
     } else {
       console.warn(`Task with ID ${taskId} not found.`);
+      return false;
     }
   }
 
@@ -106,8 +109,8 @@ class Agent {
    * @throws {Error} If a tool with the same name already exists.
    */
   addTool(tool) {
-    if (!tool || typeof tool.name !== 'string' || tool.name.trim() === '' || typeof tool.execute !== 'function') {
-      throw new Error('Tool must have a name and an execute function.');
+    if (!tool || typeof tool.name !== 'string' || tool.name.trim() === '' || typeof tool.execute !== 'function' || typeof tool.description !== 'string' || tool.description.trim() === '') {
+      throw new Error('Tool must have a name, description and an execute function.');
     }
     if (this.tools[tool.name]) {
       throw new Error(`Tool with name '${tool.name}' already exists.`);
@@ -136,7 +139,8 @@ class Agent {
       return await tool.execute(args);
     } catch (error) {
       console.error(`Error executing tool '${toolName}':`, error);
-      throw error; // Re-throw the error to be handled by the caller.
+      // Consider a more graceful handling, like setting a task status to "failed"
+      throw new Error(`Tool '${toolName}' execution failed: ${error.message}`);
     }
   }
 
@@ -144,6 +148,7 @@ class Agent {
    * Sets a value in the agent's internal state.
    * @param {string} key - The key to store the value under.
    * @param {any} value - The value to store.
+   * @returns {void}
    */
   setState(key, value) {
     if (typeof key !== 'string' || key.trim() === '') {
@@ -170,7 +175,7 @@ class Agent {
    * @returns {Task[]} A new array containing all tasks.
    */
   getAllTasks() {
-    return [...this.tasks]; // Returns a shallow copy of the tasks array
+    return this.tasks.map(task => ({...task})); // Returns a deep copy of the tasks array
   }
 }
 

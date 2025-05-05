@@ -16,43 +16,60 @@ describe('Tools', () => {
 
   describe('Search', () => {
     const mockSearchResults = { results: ['result1', 'result2'] };
-    const searchUrl = 'https://api.example.com/search?q=test query';
+    const baseUrl = 'https://api.example.com/search'; // Define base URL
+    const query = 'test query'; // Define the query
+    const searchUrl = `${baseUrl}?q=${query}`; // Construct the URL
 
     beforeEach(() => {
       global.fetch = jest.fn();
     });
 
     afterEach(() => {
-      global.fetch.mockRestore();
+      jest.restoreAllMocks(); // More robust restoration
     });
 
     it('should perform a search and return results', async () => {
       global.fetch.mockResolvedValue({
         json: jest.fn().mockResolvedValue(mockSearchResults),
+        ok: true, // Add ok: true for successful response
       });
 
-      const result = await search('test query');
-      expect(result).toEqual(expect.arrayContaining(mockSearchResults.results));
+      const result = await search(query);
+      expect(result).toEqual(mockSearchResults.results); // Direct comparison
       expect(fetch).toHaveBeenCalledWith(searchUrl);
     });
 
     it('should handle a search error', async () => {
-      global.fetch.mockRejectedValue(new Error('Search failed'));
+      const errorMessage = 'Search failed';
+      global.fetch.mockRejectedValue(new Error(errorMessage));
 
-      const result = await search('test query');
-      expect(result).toContain('Search failed');
+      const result = await search(query);
+      expect(result).toContain(errorMessage);
       expect(fetch).toHaveBeenCalledWith(searchUrl);
     });
 
     it('should handle a non-200 response', async () => {
+      const status = 404;
+      const statusText = 'Not Found';
       global.fetch.mockResolvedValue({
         ok: false,
-        status: 404,
-        statusText: 'Not Found',
+        status: status,
+        statusText: statusText,
       });
 
-      const result = await search('test query');
-      expect(result).toContain('HTTP error! status: 404');
+      const result = await search(query);
+      expect(result).toContain(`HTTP error! status: ${status}`);
+      expect(fetch).toHaveBeenCalledWith(searchUrl);
+    });
+
+    it('should handle an empty search result', async () => {
+      global.fetch.mockResolvedValue({
+        json: jest.fn().mockResolvedValue({ results: [] }),
+        ok: true,
+      });
+
+      const result = await search(query);
+      expect(result).toEqual([]);
       expect(fetch).toHaveBeenCalledWith(searchUrl);
     });
   });

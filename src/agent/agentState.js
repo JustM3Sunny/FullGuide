@@ -63,7 +63,7 @@ function addToolToAgent(state, toolName, toolFunction) {
     throw new Error('Tool function must be a function.');
   }
 
-  if (state.availableTools[toolName]) {
+  if (state.availableTools.hasOwnProperty(toolName)) {
     console.warn(`Tool "${toolName}" already exists. Overwriting.`);
   }
 
@@ -101,6 +101,20 @@ function getToolFromAgent(state, toolName) {
   return state.availableTools[toolName];
 }
 
+/**
+ * Sets the agent's status immutably.
+ * @param {AgentState} state - The current agent state.
+ * @param {string} status - The new status of the agent.
+ * @returns {AgentState} The updated agent state.
+ */
+function setAgentStatus(state, status) {
+    if (typeof status !== 'string' || status.trim() === '') {
+        throw new Error('Status must be a non-empty string.');
+    }
+
+    return updateAgentState(state, { status: status });
+}
+
 
 module.exports = {
   createAgentState,
@@ -108,4 +122,5 @@ module.exports = {
   addToolToAgent,
   removeToolFromAgent,
   getToolFromAgent,
+  setAgentStatus
 };

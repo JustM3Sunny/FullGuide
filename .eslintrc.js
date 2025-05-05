@@ -7,33 +7,39 @@ module.exports = {
   },
   extends: ['eslint:recommended', 'prettier', 'plugin:node/recommended'],
   parserOptions: {
-    ecmaVersion: 2021, // Use the year directly for clarity
+    ecmaVersion: 2021,
   },
   rules: {
     'no-unused-vars': 'warn',
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn', // Error in production
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn', // Error in production
-    'no-unused-expressions': ['warn', { allowShortCircuit: true, allowTernary: true }], // Prevent potentially unintended side effects
-    'no-template-curly-in-string': 'warn', // Catch common errors
-    'require-await': 'warn', // Ensure async functions are properly used
-    'no-extra-boolean-cast': 'warn', // Avoid unnecessary boolean conversions
-    'no-import-assign': 'error', // Prevent accidental modification of imported bindings
-    'node/exports-style': ['error', 'module.exports'], // Enforce consistent export style
-    'node/file-extension-in-import': ['error', 'always'], // Enforce file extensions in imports
-    'node/no-unpublished-require': 'off', // Allow require statements for dev dependencies
-    'node/no-extraneous-require': 'off', // Allow require statements for dev dependencies
-    'node/no-missing-require': 'off', // Allow require statements for dev dependencies
-    'node/no-unsupported-features/es-syntax': 'off', // Allow ES syntax
-    'node/no-process-exit': 'off', // Allow process.exit
-    'node/shebang': 'off', // Allow shebang
-    'node/no-callback-literal': 'off', // Allow callback literal
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
+    'no-unused-expressions': ['warn', { allowShortCircuit: true, allowTernary: true }],
+    'no-template-curly-in-string': 'warn',
+    'require-await': 'warn',
+    'no-extra-boolean-cast': 'warn',
+    'no-import-assign': 'error',
+    'node/exports-style': ['error', 'module.exports'],
+    'node/file-extension-in-import': ['error', 'always'],
+    'node/no-unpublished-require': 'off',
+    'node/no-extraneous-require': 'off',
+    'node/no-missing-require': 'off',
+    'node/no-unsupported-features/es-syntax': 'off',
+    'node/no-process-exit': 'off',
+    'node/shebang': 'off',
+    'node/no-callback-literal': 'off',
+    'node/prefer-global/process': 'warn', // Suggest using global process instead of require('process')
+    'node/prefer-global/buffer': 'warn', // Suggest using global Buffer instead of require('buffer')
+    'node/no-sync': 'warn', // Discourage synchronous operations
+    'security/detect-object-injection': 'warn', // Detect potential object injection vulnerabilities
+    'security/detect-possible-timing-attacks': 'warn', // Detect potential timing attacks
   },
   overrides: [
     {
       files: ['*.test.js', '*.spec.js'],
       rules: {
-        'no-unused-expressions': 'off', // Allow expressions in tests
+        'no-unused-expressions': 'off',
       },
     },
   ],
+  plugins: ['security'],
 };
