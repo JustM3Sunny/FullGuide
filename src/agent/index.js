@@ -16,6 +16,13 @@ const { v4: uuidv4 } = require('uuid');
 
 class Agent {
   constructor(name, description) {
+    if (typeof name !== 'string' || name.trim() === '') {
+      throw new Error('Agent name must be a non-empty string.');
+    }
+    if (typeof description !== 'string') {
+      throw new Error('Agent description must be a string.');
+    }
+
     this.id = uuidv4(); // Generate a unique ID for the agent
     this.name = name; // Assign a name to the agent
     this.description = description; // Assign a description to the agent
@@ -25,6 +32,10 @@ class Agent {
 
   // Add a message to the agent's memory
   remember(message) {
+    if (typeof message !== 'string') {
+      console.warn('Attempted to add non-string message to memory.  Message ignored.');
+      return;
+    }
     this.memory.push(message);
   }
 
@@ -35,6 +46,9 @@ class Agent {
 
   // Add a tool to the agent
   addTool(name, toolFunction) {
+    if (typeof name !== 'string' || name.trim() === '') {
+      throw new Error('Tool name must be a non-empty string.');
+    }
     if (typeof toolFunction !== 'function') {
       throw new Error(`Tool "${name}" must be a function.`);
     }
@@ -43,6 +57,9 @@ class Agent {
 
   // Use a tool
   async useTool(name, input) {
+    if (typeof name !== 'string' || name.trim() === '') {
+      return 'Error: Tool name must be a non-empty string.';
+    }
     if (!this.tools[name]) {
       return `Tool "${name}" not found.`;
     }
@@ -81,11 +98,19 @@ const agentState = {
 
   // Get an agent by ID
   getAgent(id) {
+    if (typeof id !== 'string') {
+      console.warn('Agent ID must be a string.');
+      return null;
+    }
     return this.agents.get(id) || null; // Return null if agent not found
   },
 
   // Remove an agent by ID
   removeAgent(id) {
+    if (typeof id !== 'string') {
+      console.warn('Agent ID must be a string.');
+      return;
+    }
     this.agents.delete(id);
   },
 
@@ -99,6 +124,9 @@ module.exports = agentState;
 
 // src/tools/search.js
 async function search(query) {
+  if (typeof query !== 'string') {
+    return 'Error: Search query must be a string.';
+  }
   // Simulate a search function (replace with actual search logic)
   await new Promise(resolve => setTimeout(resolve, 50)); // Simulate async operation
   return `Search results for: ${query} - [Simulated Results]`;
@@ -110,6 +138,9 @@ module.exports = search;
 const { evaluate } = require('mathjs');
 
 async function calculate(expression) {
+  if (typeof expression !== 'string') {
+    return 'Error: Calculation expression must be a string.';
+  }
   try {
     const result = evaluate(expression);
     return result;

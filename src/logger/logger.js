@@ -30,13 +30,11 @@ let currentLevel = levels.INFO; // Default log level
  */
 function setLevel(levelString) {
   const levelStringUpper = levelString.toUpperCase();
-  const newLevel = levels[levelStringUpper];
-
-  if (newLevel === undefined) {
+  if (!levels.hasOwnProperty(levelStringUpper)) {
     throw new Error(`Invalid log level: ${levelString}. Valid levels are: ${Object.keys(levels).join(', ')}`);
   }
 
-  currentLevel = newLevel;
+  currentLevel = levels[levelStringUpper];
 }
 
 /**
@@ -49,6 +47,7 @@ function log(level, message, ...args) {
   if (level >= currentLevel) {
     const timestamp = new Date().toISOString();
     const levelString = levelStrings[level];
+    // Consider using console[levelString.toLowerCase()] for native console methods
     console.log(`${timestamp} [${levelString}] ${message}`, ...args);
   }
 }

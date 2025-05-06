@@ -115,6 +115,16 @@ function setAgentStatus(state, status) {
     return updateAgentState(state, { status: status });
 }
 
+/**
+ * Checks if a tool exists in the agent's available tools.
+ * @param {AgentState} state - The current agent state.
+ * @param {string} toolName - The name of the tool to check.
+ * @returns {boolean} True if the tool exists, false otherwise.
+ */
+function hasTool(state, toolName) {
+    return state.availableTools.hasOwnProperty(toolName);
+}
+
 
 module.exports = {
   createAgentState,
@@ -122,5 +132,6 @@ module.exports = {
   addToolToAgent,
   removeToolFromAgent,
   getToolFromAgent,
-  setAgentStatus
+  setAgentStatus,
+  hasTool
 };

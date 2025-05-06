@@ -23,12 +23,11 @@ class Memory {
    * @param {any} value - The value to store.
    * @returns {Promise<void>}
    */
-  set(key, value) {
+  async set(key, value) {
     if (typeof key !== 'string') {
-      return Promise.reject(new TypeError('Key must be a string.'));
+      throw new TypeError('Key must be a string.');
     }
     this.store.set(key, value);
-    return Promise.resolve();
   }
 
   /**
@@ -37,12 +36,11 @@ class Memory {
    * @param {string} key - The key to retrieve the value for.
    * @returns {Promise<any | undefined>} The value associated with the key, or undefined if the key is not found.
    */
-  get(key) {
+  async get(key) {
     if (typeof key !== 'string') {
-      return Promise.reject(new TypeError('Key must be a string.'));
+      throw new TypeError('Key must be a string.');
     }
-    const value = this.store.get(key);
-    return Promise.resolve(value);
+    return this.store.get(key);
   }
 
   /**
@@ -51,21 +49,19 @@ class Memory {
    * @param {string} key - The key to delete.
    * @returns {Promise<void>}
    */
-  delete(key) {
+  async delete(key) {
     if (typeof key !== 'string') {
-      return Promise.reject(new TypeError('Key must be a string.'));
+      throw new TypeError('Key must be a string.');
     }
     this.store.delete(key);
-    return Promise.resolve();
   }
 
   /**
    * Clears all data from memory.
    * @returns {Promise<void>}
    */
-  clear() {
+  async clear() {
     this.store.clear();
-    return Promise.resolve();
   }
 
   /**
@@ -74,11 +70,11 @@ class Memory {
    * @param {string} key - The key to check.
    * @returns {Promise<boolean>} True if the key exists, false otherwise.
    */
-  has(key) {
+  async has(key) {
     if (typeof key !== 'string') {
-      return Promise.reject(new TypeError('Key must be a string.'));
+      throw new TypeError('Key must be a string.');
     }
-    return Promise.resolve(this.store.has(key));
+    return this.store.has(key);
   }
 
   /**
@@ -86,8 +82,8 @@ class Memory {
    *
    * @returns {Promise<string[]>} An array of keys.
    */
-  keys() {
-    return Promise.resolve(Array.from(this.store.keys()));
+  async keys() {
+    return Array.from(this.store.keys());
   }
 
   /**
@@ -95,8 +91,8 @@ class Memory {
    *
    * @returns {Promise<number>} The number of items.
    */
-  size() {
-    return Promise.resolve(this.store.size);
+  async size() {
+    return this.store.size;
   }
 }
 

@@ -5,7 +5,12 @@ module.exports = {
     es2021: true,
     jest: true,
   },
-  extends: ['eslint:recommended', 'prettier', 'plugin:node/recommended'],
+  extends: [
+    'eslint:recommended',
+    'prettier',
+    'plugin:node/recommended',
+    'plugin:security/recommended', // Added security plugin to extends
+  ],
   parserOptions: {
     ecmaVersion: 2021,
   },
@@ -13,7 +18,10 @@ module.exports = {
     'no-unused-vars': 'warn',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
-    'no-unused-expressions': ['warn', { allowShortCircuit: true, allowTernary: true }],
+    'no-unused-expressions': [
+      'warn',
+      { allowShortCircuit: true, allowTernary: true },
+    ],
     'no-template-curly-in-string': 'warn',
     'require-await': 'warn',
     'no-extra-boolean-cast': 'warn',
@@ -30,8 +38,10 @@ module.exports = {
     'node/prefer-global/process': 'warn', // Suggest using global process instead of require('process')
     'node/prefer-global/buffer': 'warn', // Suggest using global Buffer instead of require('buffer')
     'node/no-sync': 'warn', // Discourage synchronous operations
-    'security/detect-object-injection': 'warn', // Detect potential object injection vulnerabilities
-    'security/detect-possible-timing-attacks': 'warn', // Detect potential timing attacks
+    // 'security/detect-object-injection': 'warn', // Detect potential object injection vulnerabilities - now handled by plugin
+    // 'security/detect-possible-timing-attacks': 'warn', // Detect potential timing attacks - now handled by plugin
+    'security/detect-non-literal-require': 'warn', // Added rule to detect non-literal require
+    'security/detect-unsafe-regex': 'warn', // Added rule to detect unsafe regex
   },
   overrides: [
     {

@@ -177,6 +177,41 @@ class Agent {
   getAllTasks() {
     return this.tasks.map(task => ({...task})); // Returns a deep copy of the tasks array
   }
+
+    /**
+     * Updates a task with a result or error.
+     * @param {string} taskId - The ID of the task to update.
+     * @param {object} update - An object containing either a result or an error.
+     * @param {any} [update.result] - The result of the task.
+     * @param {string} [update.error] - An error message if the task failed.
+     * @returns {boolean} True if the task was updated, false otherwise.
+     */
+    updateTask(taskId, update) {
+        if (typeof taskId !== 'string' || taskId.trim() === '') {
+            console.warn('Invalid taskId provided to updateTask.');
+            return false;
+        }
+
+        if (!update || (update.result === undefined && update.error === undefined)) {
+            console.warn('Invalid update provided to updateTask.  Must contain result or error.');
+            return false;
+        }
+
+        const task = this.getTask(taskId);
+        if (task) {
+            if (update.result !== undefined) {
+                task.result = update.result;
+            }
+            if (update.error !== undefined) {
+                task.error = update.error;
+                task.status = 'failed'; // Automatically set status to failed if there's an error
+            }
+            return true;
+        } else {
+            console.warn(`Task with ID ${taskId} not found.`);
+            return false;
+        }
+    }
 }
 
 module.exports = Agent;

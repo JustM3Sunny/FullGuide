@@ -21,7 +21,7 @@
 class Tool {
   /**
    * @param {string} name - The name of the tool.
-   * @param {function(string): string} execute - The function that performs the tool's action.  Takes a task string and returns a result string.
+   * @param {function(string): Promise<string>} execute - The function that performs the tool's action.  Takes a task string and returns a result string.
    */
   constructor(name, execute) {
     if (typeof name !== 'string' || !name) {
@@ -33,6 +33,15 @@ class Tool {
 
     this.name = name;
     this.execute = execute;
+  }
+
+  async execute(task) {
+    try {
+      return await this.execute(task);
+    } catch (error) {
+      console.error(`Error executing tool ${this.name} for task ${task}:`, error);
+      return `Error executing ${this.name} for ${task}: ${error.message}`;
+    }
   }
 }
 
@@ -93,14 +102,22 @@ class Agent {
       const subTasks = this.breakDownTask(task.description);
 
       // Execute each sub-task.  Use Promise.all to execute in parallel.
-      const results = await Promise.all(this.executeSubTasks(subTasks));
+      try {
+        const results = await Promise.all(subTasks.map(async (subTask) => {
+          return await this.executeSubTask(subTask);
+        }));
 
-      // Combine the results.
-      const finalResult = this.combineResults(results);
+        // Combine the results.
+        const finalResult = this.combineResults(results);
 
-      task.status = 'completed';
-      task.result = finalResult;
-      console.log(`${this.name}: Task completed. Result: ${finalResult}`);
+        task.status = 'completed';
+        task.result = finalResult;
+        console.log(`${this.name}: Task completed. Result: ${finalResult}`);
+      } catch (error) {
+        console.error(`${this.name}: Error processing task: ${task.description}`, error);
+        task.status = 'failed';
+        task.result = `Task failed: ${error.message}`;
+      }
     }
   }
 
@@ -117,31 +134,29 @@ class Agent {
   }
 
   /**
-   * Executes each sub-task using available tools.
-   * @param {string[]} subTasks - An array of sub-task descriptions.
-   * @returns {Promise<string>[]} - An array of Promises, each resolving to the result of a sub-task.
+   * Executes a single sub-task using available tools.
+   * @param {string} subTask - The sub-task description.
+   * @returns {Promise<string>} - A Promise resolving to the result of the sub-task.
    */
-  executeSubTasks(subTasks) {
-    return subTasks.map(async (subTask) => {
-      console.log(`${this.name}: Executing sub-task: ${subTask}`);
+  async executeSubTask(subTask) {
+    console.log(`${this.name}: Executing sub-task: ${subTask}`);
 
-      // Find a suitable tool for the sub-task (very basic example).
-      const tool = this.findToolForTask(subTask);
+    // Find a suitable tool for the sub-task (very basic example).
+    const tool = this.findToolForTask(subTask);
 
-      if (tool) {
-        try {
-          const result = await tool.execute(subTask); // Await the tool execution
-          console.log(`${this.name}: Sub-task completed with tool: ${tool.name}. Result: ${result}`);
-          return result;
-        } catch (error) {
-          console.error(`${this.name}: Error executing tool ${tool.name} for sub-task ${subTask}:`, error);
-          return `Error executing ${tool.name} for ${subTask}: ${error.message}`; // Return an error message
-        }
-      } else {
-        console.log(`${this.name}: No tool found for sub-task: ${subTask}`);
-        return `No tool found for: ${subTask}`;
+    if (tool) {
+      try {
+        const result = await tool.execute(subTask); // Await the tool execution
+        console.log(`${this.name}: Sub-task completed with tool: ${tool.name}. Result: ${result}`);
+        return result;
+      } catch (error) {
+        console.error(`${this.name}: Error executing tool ${tool.name} for sub-task ${subTask}:`, error);
+        return `Error executing ${tool.name} for ${subTask}: ${error.message}`; // Return an error message
       }
-    });
+    } else {
+      console.log(`${this.name}: No tool found for sub-task: ${subTask}`);
+      return `No tool found for: ${subTask}`;
+    }
   }
 
   /**

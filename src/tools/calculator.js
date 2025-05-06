@@ -12,9 +12,7 @@
  * @param {*} value The value to check.
  * @returns {boolean} True if the value is a number, false otherwise.
  */
-function isNumber(value) {
-  return typeof value === 'number' && Number.isFinite(value);
-}
+const isNumber = (value) => typeof value === 'number' && Number.isFinite(value);
 
 
 /**
@@ -25,12 +23,12 @@ function isNumber(value) {
  * @returns {number} The sum of a and b.
  * @throws {TypeError} If either input is not a number.
  */
-function add(a, b) {
+const add = (a, b) => {
   if (!isNumber(a) || !isNumber(b)) {
     throw new TypeError('Both inputs must be numbers.');
   }
   return a + b;
-}
+};
 
 /**
  * Subtracts one number from another.
@@ -40,12 +38,12 @@ function add(a, b) {
  * @returns {number} The result of a - b.
  * @throws {TypeError} If either input is not a number.
  */
-function subtract(a, b) {
+const subtract = (a, b) => {
   if (!isNumber(a) || !isNumber(b)) {
     throw new TypeError('Both inputs must be numbers.');
   }
   return a - b;
-}
+};
 
 /**
  * Multiplies two numbers together.
@@ -55,12 +53,12 @@ function subtract(a, b) {
  * @returns {number} The product of a and b.
  * @throws {TypeError} If either input is not a number.
  */
-function multiply(a, b) {
+const multiply = (a, b) => {
   if (!isNumber(a) || !isNumber(b)) {
     throw new TypeError('Both inputs must be numbers.');
   }
   return a * b;
-}
+};
 
 /**
  * Divides one number by another.
@@ -71,7 +69,7 @@ function multiply(a, b) {
  * @throws {TypeError} If either input is not a number.
  * @throws {Error} If attempting to divide by zero.
  */
-function divide(a, b) {
+const divide = (a, b) => {
   if (!isNumber(a) || !isNumber(b)) {
     throw new TypeError('Both inputs must be numbers.');
   }
@@ -79,7 +77,7 @@ function divide(a, b) {
     throw new Error('Cannot divide by zero.');
   }
   return a / b;
-}
+};
 
 /**
  * Performs a calculation based on the provided operator and operands.
@@ -90,7 +88,7 @@ function divide(a, b) {
  * @returns {number} The result of the calculation.
  * @throws {Error} If the operator is invalid.
  */
-function calculate(operator, operand1, operand2) {
+const calculate = (operator, operand1, operand2) => {
   switch (operator) {
     case '+':
       return add(operand1, operand2);
@@ -103,7 +101,7 @@ function calculate(operator, operand1, operand2) {
     default:
       throw new Error(`Invalid operator: ${operator}`);
   }
-}
+};
 
 
 module.exports = {

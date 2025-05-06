@@ -66,7 +66,10 @@
 const calculator = require('./calculator');
 const search = require('./search');
 
-module.exports = {
+// Consider using a more descriptive name for the module exports.
+const tools = {
   calculator,
   search,
 };
+
+module.exports = tools;
